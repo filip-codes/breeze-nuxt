@@ -12,14 +12,17 @@ First, create a Nuxt.js compatible Laravel backend by installing Laravel Breeze 
 
 ```bash
 # Create the Laravel application...
-laravel new next-backend
+laravel new nuxt-backend
 
-cd next-backend
+cd nuxt-backend
 
 # Install Breeze and dependencies...
 composer require laravel/breeze
 
 php artisan breeze:install api
+
+# Be sure you've updated your database connection in your .env file and run...
+php artisan migrate
 
 # Serve the application...
 php artisan serve
