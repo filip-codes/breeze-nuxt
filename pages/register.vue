@@ -1,5 +1,8 @@
 <template>
     <div>
+        <!-- Validation Errors -->
+        <BreezeValidationErrors :errors="form.errors" class="mb-4" />
+
         <form @submit.prevent="submit">
             <div>
                 <BreezeLabel for="name" value="Name" />
@@ -35,16 +38,24 @@
 </template>
 
 <script>
+import BreezeValidationErrors from '@/components/validation-errors.vue'
 import BreezeButton from '@/components/button.vue'
 import BreezeInput from '@/components/input.vue'
 import BreezeLabel from '@/components/label.vue'
 export default {
+    head: {
+        title: 'Register',
+    },
+
     layout: 'guest',
+
     components: {
+        BreezeValidationErrors,
         BreezeButton,
         BreezeInput,
         BreezeLabel,
     },
+
     data() {
         return {
             form: {
@@ -53,23 +64,30 @@ export default {
                 password: '',
                 password_confirmation: '',
                 terms: false,
-                processing: false
+                processing: false,
+                errors: []
             }
         }
     },
-    methods: {
-        submit() {
-            this.processing = true
 
-            this.$axios.get('sanctum/csrf-cookie').then(() => {
-                this.$axios.$post('register', this.form).then(() => {
-                    this.$auth.loginWith('laravelSanctum', {
-                        data: this.form
-                    }).then(() => {
-                        this.processing = false
+    methods: {
+        async submit() {
+            this.processing = true
+            this.form.errors = []
+
+            try {
+                await this.$axios.post('register', this.form)
+
+                await this.$auth.loginWith('laravelSanctum', { data: this.form })
+
+                this.processing = false
+            } catch (e) {
+                Object.keys(e.response.data.errors).forEach(key => {
+                    Object.values(e.response.data.errors[key]).forEach(error => {
+                        this.form.errors.push(error)
                     })
                 })
-            })
+            }
         }
     }
 }

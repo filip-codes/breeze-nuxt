@@ -21,7 +21,12 @@
 <script>
 import BreezeAuthenticatedLayout from '@/layouts/authenticated.vue'
 export default {
+    head: {
+        title: 'Dashboard',
+    },
+
     middleware: 'authenticated',
+
     components: {
         BreezeAuthenticatedLayout,
     }

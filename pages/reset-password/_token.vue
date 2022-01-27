@@ -1,5 +1,8 @@
 <template>
     <div>
+        <!-- Validation Errors -->
+        <BreezeValidationErrors :errors="form.errors" class="mb-4" />
+        
         <form @submit.prevent="submit">
             <div>
                 <BreezeLabel for="email" value="Email" />
@@ -26,16 +29,24 @@
 </template>
 
 <script>
+import BreezeValidationErrors from '@/components/validation-errors.vue'
 import BreezeButton from '@/components/button.vue'
 import BreezeInput from '@/components/input.vue'
 import BreezeLabel from '@/components/label.vue'
 export default {
+    head: {
+        title: 'Reset Password',
+    },
+
     layout: 'guest',
+
     components: {
+        BreezeValidationErrors,
         BreezeButton,
         BreezeInput,
         BreezeLabel,
     },
+
     data() {
         return {
             form: {
@@ -43,17 +54,28 @@ export default {
                 email: '',
                 password: '',
                 password_confirmation: '',
-                processing: false
+                processing: false,
+                errors: []
             }
         }
     },
+
     methods: {
-        submit() {
-            this.$axios.get('sanctum/csrf-cookie').then(() => {
-                this.$axios.post('/reset-password', this.form).then(() => {
-                    this.processing = false
+        async submit() {
+            this.processing = true
+            this.form.errors = []
+
+            try {
+                await this.$axios.post('/reset-password', this.form)
+
+                this.processing = false
+            } catch (e) {
+                Object.keys(e.response.data.errors).forEach(key => {
+                    Object.values(e.response.data.errors[key]).forEach(error => {
+                        this.form.errors.push(error)
+                    })
                 })
-            })
+            }
         }
     }
 }

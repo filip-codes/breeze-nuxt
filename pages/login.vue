@@ -1,5 +1,8 @@
 <template>
     <div>
+        <!-- Validation Errors -->
+        <BreezeValidationErrors :errors="form.errors" class="mb-4" />
+        
         <form @submit.prevent="submit">
             <div>
                 <BreezeLabel for="email" value="Email" />
@@ -32,40 +35,54 @@
 </template>
 
 <script>
-import BreezeButton from '@/components/button.vue'
+import BreezeValidationErrors from '@/components/validation-errors.vue'
 import BreezeCheckbox from '@/components/checkbox.vue'
+import BreezeButton from '@/components/button.vue'
 import BreezeInput from '@/components/input.vue'
 import BreezeLabel from '@/components/label.vue'
 export default {
+    head: {
+        title: 'Login',
+    },
+
     layout: 'guest',
+
     components: {
-        BreezeButton,
+        BreezeValidationErrors,
         BreezeCheckbox,
+        BreezeButton,
         BreezeInput,
         BreezeLabel,
     },
+
     data() {
         return {
             form: {
                 email: '',
                 password: '',
                 remember: false,
-                processing: false
+                processing: false,
+                errors: []
             }
         }
     },
-    methods: {
-        submit() {
-            this.processing = true
 
-            this.$auth.loginWith('laravelSanctum', {
-                data: {
-                    email: this.form.email,
-                    password: this.form.password
-                }
-            }).then(() => {
+    methods: {
+        async submit() {
+            this.processing = true
+            this.form.errors = []
+
+            try {
+                await this.$auth.loginWith('laravelSanctum', { data: this.form })
+            
                 this.processing = false
-            })
+            } catch (e) {
+                Object.keys(e.response.data.errors).forEach(key => {
+                    Object.values(e.response.data.errors[key]).forEach(error => {
+                        this.form.errors.push(error)
+                    })
+                })
+            }
         }
     }
 }

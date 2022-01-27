@@ -23,10 +23,16 @@
 <script>
 import BreezeButton from '@/components/button.vue'
 export default {
+    head: {
+        title: 'Verify Email',
+    },
+
     layout: 'guest',
+
     components: {
         BreezeButton,
     },
+
     data() {
         return {
             form: {
@@ -35,23 +41,22 @@ export default {
             }
         }
     },
-    methods: {
-        submit() {
-            this.processing = true
 
-            this.$axios.get('sanctum/csrf-cookie').then(() => {
-                this.$axios.$post('/email/verification-notification').then(() => {
-                    this.status = 'verification-link-sent'
-
-                    this.processing = false
-                })
-            })
-        },
-    },
     computed: {
         verificationLinkSent() {
             return this.status === 'verification-link-sent';
         }
-    }
+    },
+
+    methods: {
+        async submit() {
+            this.processing = true
+
+            await this.$axios.post('/email/verification-notification')
+            
+            this.status = 'verification-link-sent'
+            this.processing = false
+        },
+    },
 }
 </script>
