@@ -1,7 +1,7 @@
 # Laravel Breeze - Nuxt.js Edition
 
 ## Inspiration
-This project was heavily inspired by the [Breeze Nuxt.js](https://github.com/laravel/breeze-next) project. Have fun!
+This project was heavily inspired by the [Breeze Next.js](https://github.com/laravel/breeze-next) project. Have fun!
 
 ## Introduction
 
