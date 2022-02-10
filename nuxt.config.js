@@ -19,7 +19,7 @@ export default {
   ssr: false,
 
   env: {
-    backendUrl: 'http://localhost:8000'
+    backendUrl: process.env.NUXT_PUBLIC_BACKEND_URL
   },
 
   // Global CSS: https://go.nuxtjs.dev/config-css
@@ -48,7 +48,7 @@ export default {
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
     // Workaround to avoid enforcing hard-coded localhost:3000: https://github.com/nuxt-community/axios-module/issues/308
-    baseURL: 'http://localhost:8000',
+    baseURL: process.env.NUXT_PUBLIC_BACKEND_URL,
     credentials: true
   },
 
@@ -60,7 +60,7 @@ export default {
     strategies: {
       laravelSanctum: {
         provider: 'laravel/sanctum',
-        url: 'http://localhost:8000'
+        url: process.env.NUXT_PUBLIC_BACKEND_URL
       },
     }
   }
