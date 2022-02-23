@@ -52,6 +52,8 @@ export default {
         async submit() {
             this.processing = true
 
+            await this.$axios.get('/sanctum/csrf-cookie')
+
             await this.$axios.post('/email/verification-notification')
             
             this.status = 'verification-link-sent'

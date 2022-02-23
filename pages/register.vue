@@ -76,6 +76,8 @@ export default {
             this.form.errors = []
 
             try {
+                await this.$axios.get('/sanctum/csrf-cookie')
+
                 await this.$axios.post('register', this.form)
 
                 await this.$auth.loginWith('laravelSanctum', { data: this.form })

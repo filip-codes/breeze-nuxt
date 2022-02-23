@@ -57,6 +57,8 @@ export default {
             this.form.errors = []
 
             try {
+                await this.$axios.get('/sanctum/csrf-cookie')
+
                 await this.$axios.post('/forgot-password', this.form)
 
                 this.processing = false
