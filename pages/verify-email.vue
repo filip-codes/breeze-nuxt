@@ -50,14 +50,14 @@ export default {
 
     methods: {
         async submit() {
-            this.processing = true
+            this.form.processing = true
 
             await this.$axios.get('/sanctum/csrf-cookie')
 
             await this.$axios.post('/email/verification-notification')
             
-            this.status = 'verification-link-sent'
-            this.processing = false
+            this.form.status = 'verification-link-sent'
+            this.form.processing = false
         },
     },
 }
