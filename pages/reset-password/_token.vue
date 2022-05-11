@@ -1,84 +1,109 @@
 <template>
-    <div>
-        <!-- Validation Errors -->
-        <BreezeValidationErrors :errors="form.errors" class="mb-4" />
-        
-        <form @submit.prevent="submit">
-            <div>
-                <BreezeLabel for="email" value="Email" />
-                <BreezeInput id="email" type="email" class="mt-1 block w-full" v-model="form.email" required autofocus autocomplete="username" />
-            </div>
+  <div>
+    <!-- Validation Errors -->
+    <BreezeValidationErrors :errors="form.errors" class="mb-4" />
 
-            <div class="mt-4">
-                <BreezeLabel for="password" value="Password" />
-                <BreezeInput id="password" type="password" class="mt-1 block w-full" v-model="form.password" required autocomplete="new-password" />
-            </div>
+    <form @submit.prevent="submit">
+      <div>
+        <BreezeLabel for="email" value="Email" />
+        <BreezeInput
+          id="email"
+          type="email"
+          class="mt-1 block w-full"
+          v-model="form.email"
+          required
+          autofocus
+          autocomplete="username"
+        />
+      </div>
 
-            <div class="mt-4">
-                <BreezeLabel for="password_confirmation" value="Confirm Password" />
-                <BreezeInput id="password_confirmation" type="password" class="mt-1 block w-full" v-model="form.password_confirmation" required autocomplete="new-password" />
-            </div>
+      <div class="mt-4">
+        <BreezeLabel for="password" value="Password" />
+        <BreezeInput
+          id="password"
+          type="password"
+          class="mt-1 block w-full"
+          v-model="form.password"
+          required
+          autocomplete="new-password"
+        />
+      </div>
 
-            <div class="flex items-center justify-end mt-4">
-                <BreezeButton :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                    Reset Password
-                </BreezeButton>
-            </div>
-        </form>
-    </div>
+      <div class="mt-4">
+        <BreezeLabel for="password_confirmation" value="Confirm Password" />
+        <BreezeInput
+          id="password_confirmation"
+          type="password"
+          class="mt-1 block w-full"
+          v-model="form.password_confirmation"
+          required
+          autocomplete="new-password"
+        />
+      </div>
+
+      <div class="flex items-center justify-end mt-4">
+        <BreezeButton
+          :class="{ 'opacity-25': form.processing }"
+          :disabled="form.processing"
+        >
+          Reset Password
+        </BreezeButton>
+      </div>
+    </form>
+  </div>
 </template>
 
 <script>
-import BreezeValidationErrors from '@/components/validation-errors.vue'
-import BreezeButton from '@/components/button.vue'
-import BreezeInput from '@/components/input.vue'
-import BreezeLabel from '@/components/label.vue'
+import BreezeValidationErrors from "@/components/validation-errors.vue";
+import BreezeButton from "@/components/button.vue";
+import BreezeInput from "@/components/input.vue";
+import BreezeLabel from "@/components/label.vue";
 export default {
-    head: {
-        title: 'Reset Password',
+  head: {
+    title: "Reset Password",
+  },
+
+  layout: "guest",
+
+  components: {
+    BreezeValidationErrors,
+    BreezeButton,
+    BreezeInput,
+    BreezeLabel,
+  },
+
+  data() {
+    return {
+      form: {
+        token: this.$router.currentRoute.params.token,
+        email: "",
+        password: "",
+        password_confirmation: "",
+        processing: false,
+        errors: [],
+      },
+    };
+  },
+
+  methods: {
+    async submit() {
+      this.processing = true;
+      this.form.errors = [];
+
+      try {
+        await this.$axios.get("/sanctum/csrf-cookie");
+
+        await this.$axios.post("/reset-password", this.form);
+
+        this.processing = false;
+      } catch (e) {
+        Object.keys(e.response.data.errors).forEach((key) => {
+          Object.values(e.response.data.errors[key]).forEach((error) => {
+            this.form.errors.push(error);
+          });
+        });
+      }
     },
-
-    layout: 'guest',
-
-    components: {
-        BreezeValidationErrors,
-        BreezeButton,
-        BreezeInput,
-        BreezeLabel,
-    },
-
-    data() {
-        return {
-            form: {
-                token: this.$router.currentRoute.params.token,
-                email: '',
-                password: '',
-                password_confirmation: '',
-                processing: false,
-                errors: []
-            }
-        }
-    },
-
-    methods: {
-        async submit() {
-            this.processing = true
-            this.form.errors = []
-
-            try {
-                await this.$axios.get('/sanctum/csrf-cookie')
-
-                await this.$axios.post('/reset-password', this.form)
-
-                this.processing = false
-            } catch (e) {
-                Object.keys(e.response.data.errors).forEach(key => {
-                    Object.values(e.response.data.errors[key]).forEach(error => {
-                        this.form.errors.push(error)
-                    })
-                })
-            }
-        }
-    }
-}
+  },
+};
 </script>
