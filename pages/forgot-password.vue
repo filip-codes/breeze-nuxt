@@ -66,7 +66,7 @@ export default {
 
   methods: {
     async submit() {
-      this.processing = true;
+      this.form.processing = true;
       this.form.errors = [];
 
       try {
@@ -74,7 +74,7 @@ export default {
 
         await this.$axios.post("/forgot-password", this.form);
 
-        this.processing = false;
+        this.form.processing = false;
       } catch (e) {
         Object.keys(e.response.data.errors).forEach((key) => {
           Object.values(e.response.data.errors[key]).forEach((error) => {

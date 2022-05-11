@@ -91,13 +91,13 @@ export default {
 
   methods: {
     async submit() {
-      this.processing = true;
+      this.form.processing = true;
       this.form.errors = [];
 
       try {
         await this.$auth.loginWith("laravelSanctum", { data: this.form });
 
-        this.processing = false;
+        this.form.processing = false;
       } catch (e) {
         Object.keys(e.response.data.errors).forEach((key) => {
           Object.values(e.response.data.errors[key]).forEach((error) => {
