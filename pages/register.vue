@@ -125,6 +125,8 @@ export default {
             this.form.errors.push(error);
           });
         });
+        
+        this.form.processing = false;
       }
     },
   },
